@@ -1207,6 +1207,28 @@ footer {
 .dl-sub { font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
 .dl-divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 4px 6px; }
 
+/* ── Beta download grid (inside modal) ── */
+.wl-beta-section { margin-bottom: 18px; }
+.wl-beta-section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+.wl-dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wl-dl-btn {
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.15s;
+}
+.wl-dl-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.22); }
+.wl-dl-platform { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.wl-dl-filename { font-size: 10px; color: var(--text-tertiary); margin-top: 3px; }
+
 /* ── Waitlist Modal ── */
 .waitlist-overlay {
   display: none;
@@ -1308,26 +1330,7 @@ button.btn-secondary { background: none; border: none; cursor: pointer; font-fam
   <h1 class="reveal reveal-delay-1">Your files.<br />Your machine.<br />Your brain.</h1>
   <p class="hero-sub reveal reveal-delay-2">FlowOS indexes everything on your Mac. Ask questions, surface contacts, export memories — all running locally through Ollama. Zero bytes ever leave your machine.</p>
   <div class="hero-btns reveal reveal-delay-3">
-    <div class="download-wrap">
-      <button class="btn-primary" onclick="toggleDownload(event,'hero-dl')" style="border:none;cursor:pointer;font-family:inherit;">Download ↓</button>
-      <div class="download-dropdown" id="hero-dl">
-        <div class="dl-section-label">General</div>
-        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-0.1.0-universal.dmg" class="dl-option">
-          <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS-0.1.0-universal.dmg</div></div>
-        </a>
-        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Setup.0.1.0.exe" class="dl-option">
-          <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS.Setup.0.1.0.exe</div></div>
-        </a>
-        <div class="dl-divider"></div>
-        <div class="dl-section-label">Business</div>
-        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business-0.1.0-universal.dmg" class="dl-option">
-          <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS.Business-0.1.0-universal.dmg</div></div>
-        </a>
-        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business.Setup.0.1.0.exe" class="dl-option">
-          <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS.Business.Setup.0.1.0.exe</div></div>
-        </a>
-      </div>
-    </div>
+    <button onclick="openWaitlist()" class="btn-primary" style="border:none;cursor:pointer;font-family:inherit;">Join Beta</button>
     <a href="#ask" class="btn-secondary">See it in action</a>
   </div>
 
@@ -1841,26 +1844,7 @@ button.btn-secondary { background: none; border: none; cursor: pointer; font-fam
     <h2 class="cta-h2 reveal reveal-delay-1">Your AI.<br />Your rules.</h2>
     <p class="cta-desc reveal reveal-delay-2">Join the private beta and be first to run FlowOS on your Mac. Free during beta. No credit card. No cloud.</p>
     <div class="cta-btns reveal reveal-delay-3">
-      <div class="download-wrap">
-        <button class="btn-primary" onclick="toggleDownload(event,'cta-dl')" style="border:none;cursor:pointer;font-family:inherit;">Download ↓</button>
-        <div class="download-dropdown" id="cta-dl">
-          <div class="dl-section-label">General</div>
-          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-0.1.0-universal.dmg" class="dl-option">
-            <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS-0.1.0-universal.dmg</div></div>
-          </a>
-          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Setup.0.1.0.exe" class="dl-option">
-            <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS.Setup.0.1.0.exe</div></div>
-          </a>
-          <div class="dl-divider"></div>
-          <div class="dl-section-label">Business</div>
-          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business-0.1.0-universal.dmg" class="dl-option">
-            <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS.Business-0.1.0-universal.dmg</div></div>
-          </a>
-          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business.Setup.0.1.0.exe" class="dl-option">
-            <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS.Business.Setup.0.1.0.exe</div></div>
-          </a>
-        </div>
-      </div>
+      <button onclick="openWaitlist()" class="btn-primary" style="border:none;cursor:pointer;font-family:inherit;">Join Beta</button>
       <button class="btn-secondary" onclick="openWaitlist()" style="border:none;cursor:pointer;font-family:inherit;">Join waitlist ›</button>
     </div>
     <div class="cta-platform reveal">macOS 10.15 or later · Windows 8 or later · Free during beta</div>
@@ -1873,15 +1857,16 @@ button.btn-secondary { background: none; border: none; cursor: pointer; font-fam
   <div>macOS 14+</div>
 </footer>
 
-<!-- ── Waitlist Modal ── -->
+<!-- ── Waitlist / Beta Modal ── -->
 <div class="waitlist-overlay" id="waitlist-overlay" onclick="handleOverlayClick(event)">
   <div class="waitlist-modal">
     <button class="wl-close" onclick="closeWaitlist()">✕</button>
-    <!-- Form state -->
+
+    <!-- ① Form state -->
     <div id="wl-form-wrap">
       <div class="wl-eyebrow"><span class="status-dot"></span>Private Beta</div>
-      <div class="wl-title">Join the Waitlist</div>
-      <p class="wl-desc">Be first to get access. Free during beta — no credit card, no cloud.</p>
+      <div class="wl-title">Join Beta</div>
+      <p class="wl-desc">Have a beta key? Enter it below to download immediately. No key? Join the waitlist.</p>
       <form id="wl-form" onsubmit="handleWaitlistSubmit(event)" novalidate>
         <div class="wl-field">
           <label class="wl-label" for="wl-name">Full Name</label>
@@ -1902,12 +1887,58 @@ button.btn-secondary { background: none; border: none; cursor: pointer; font-fam
             <div class="wl-plan-card"><span class="plan-icon">🏢</span>Business<span class="plan-sub">Team / org use</span></div>
           </label>
         </div>
-        <button type="submit" class="wl-submit" id="wl-submit-btn">Join Waitlist</button>
+        <div class="wl-field" style="margin-top:4px;">
+          <label class="wl-label" for="wl-key">Beta Access Key <span style="font-weight:400;opacity:0.5;">(optional)</span></label>
+          <input class="wl-input" id="wl-key" type="text" placeholder="FLOW-XXXXXX-XXXXXX" autocomplete="off" spellcheck="false" style="font-family:monospace;letter-spacing:0.05em;" />
+        </div>
+        <button type="submit" class="wl-submit" id="wl-submit-btn">Continue</button>
         <div class="wl-error" id="wl-error">Something went wrong — please try again.</div>
-        <p class="wl-privacy">🔒 Encrypted &amp; stored privately. No spam, ever.</p>
+        <p class="wl-privacy">Encrypted &amp; stored privately. No spam, ever.</p>
       </form>
     </div>
-    <!-- Success state -->
+
+    <!-- ② Beta key valid → show downloads -->
+    <div id="wl-beta-wrap" style="display:none;">
+      <div class="wl-eyebrow"><span class="status-dot"></span>Beta Access Granted</div>
+      <div class="wl-title" style="margin-bottom:6px;">Your downloads are ready.</div>
+      <p class="wl-desc" style="margin-bottom:24px;">Choose your edition and platform below.</p>
+
+      <div class="wl-beta-section">
+        <div class="wl-beta-section-label">General</div>
+        <div class="wl-dl-grid">
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-0.1.0-universal.dmg"
+             class="wl-dl-btn">
+            <span class="wl-dl-platform">macOS</span>
+            <span class="wl-dl-filename">FlowOS-0.1.0-universal.dmg</span>
+          </a>
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Setup.0.1.0.exe"
+             class="wl-dl-btn">
+            <span class="wl-dl-platform">Windows</span>
+            <span class="wl-dl-filename">FlowOS.Setup.0.1.0.exe</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="wl-beta-section">
+        <div class="wl-beta-section-label">Business</div>
+        <div class="wl-dl-grid">
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business-0.1.0-universal.dmg"
+             class="wl-dl-btn">
+            <span class="wl-dl-platform">macOS</span>
+            <span class="wl-dl-filename">FlowOS.Business-0.1.0-universal.dmg</span>
+          </a>
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business.Setup.0.1.0.exe"
+             class="wl-dl-btn">
+            <span class="wl-dl-platform">Windows</span>
+            <span class="wl-dl-filename">FlowOS.Business.Setup.0.1.0.exe</span>
+          </a>
+        </div>
+      </div>
+
+      <button class="wl-success-close" onclick="closeWaitlist()" style="width:100%;margin-top:8px;">Done</button>
+    </div>
+
+    <!-- ③ No / invalid key → waitlist -->
     <div class="wl-success" id="wl-success-wrap">
       <div class="wl-success-icon">✓</div>
       <div class="wl-success-title">You're on the list!</div>
@@ -2055,18 +2086,6 @@ const askObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 if (askSection) askObserver.observe(askSection);
 
-// ── Download Dropdown ──────────────────────────────────────────────────────
-function toggleDownload(event, id) {
-  event.stopPropagation();
-  const target = document.getElementById(id);
-  const isOpen = target.classList.contains('open');
-  document.querySelectorAll('.download-dropdown').forEach(d => d.classList.remove('open'));
-  if (!isOpen) target.classList.add('open');
-}
-document.addEventListener('click', () => {
-  document.querySelectorAll('.download-dropdown').forEach(d => d.classList.remove('open'));
-});
-
 // ── Waitlist Modal ─────────────────────────────────────────────────────────
 function openWaitlist() {
   document.getElementById('waitlist-overlay').classList.add('open');
@@ -2077,19 +2096,39 @@ function closeWaitlist() {
   document.body.style.overflow = '';
   setTimeout(() => {
     document.getElementById('wl-form-wrap').style.display = '';
+    document.getElementById('wl-beta-wrap').style.display = 'none';
     const s = document.getElementById('wl-success-wrap');
     s.style.display = 'none';
     document.getElementById('wl-form').reset();
     const errEl = document.getElementById('wl-error');
     if (errEl) errEl.style.display = 'none';
     const btn = document.getElementById('wl-submit-btn');
-    if (btn) { btn.disabled = false; btn.textContent = 'Join Waitlist'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Continue'; }
   }, 300);
 }
 function handleOverlayClick(e) {
   if (e.target === document.getElementById('waitlist-overlay')) closeWaitlist();
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWaitlist(); });
+
+// ── Beta key validation (SHA-256 hashes — original keys never stored here) ─
+const BETA_HASHES = new Set([
+  '9e9c11cb2ac413e015a8bde1c7ca79b30ee6f97cd5d5fbd178a2c5afdc19b637',
+  'b5d055fccaa760c898f7981c8ec48ad46c854d43145aa4ce67500e0c5be84376',
+  'd75027a1f46cc157ee47088866c5339862d5ab0dc7954614f9288de6c32a5146',
+  '23695fe0d8bfd1d01d53bd4c6bcc91e4c6f40a18aa3632b49f72b88b6fa50c2e',
+  '6195e44999cdc0fd4ab46850a699b68481ad1af2f10915d74fd7e8b1c7b5f608',
+  '03b24c9add94f75ec53e0750f13131a4192062d4947b7ee7caa0785d978c5b36',
+  'f70ca7671884e6e856baabf38ad92d220e0f76f2e0e60119a8524c64274058c3',
+  'bf8d7b94569efca55454f420b94133648072c750ea1aa683d05f3fbd8b9546df',
+  '1a034e40508ed6f9e5a74424c87fabb1cd432487f41353a5d548f024502ed0bf',
+  '961d446aa07e325cc7a6e32a17c8efeac46d23a160032aa46a6bda8b587798dd'
+]);
+
+async function sha256hex(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
 // ── Configuration (values injected by GitHub Actions at deploy time) ────────
 const WL_ENC_KEY      = 'REPLACE_WITH_BASE64_AES256_KEY=';
@@ -2138,20 +2177,29 @@ async function handleWaitlistSubmit(event) {
   const name  = document.getElementById('wl-name').value.trim();
   const email = document.getElementById('wl-email').value.trim();
   const plan  = document.querySelector('input[name="wl-plan"]:checked')?.value || 'general';
+  const key   = document.getElementById('wl-key').value.trim().toUpperCase();
   const btn   = document.getElementById('wl-submit-btn');
   const errEl = document.getElementById('wl-error');
   if (!name || !email) return;
   errEl.style.display = 'none';
-  btn.disabled = true; btn.textContent = 'Saving…';
-  try {
-    await appendToWaitlist(await encryptEntry({ name, email, plan }));
-    document.getElementById('wl-form-wrap').style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Checking…';
+
+  // Validate beta key
+  const keyHash  = key ? await sha256hex(key) : null;
+  const isBeta   = keyHash && BETA_HASHES.has(keyHash);
+
+  // Save to waitlist (fire-and-forget — don't block the UX on it)
+  encryptEntry({ name, email, plan, beta: isBeta })
+    .then(enc => appendToWaitlist(enc))
+    .catch(err => console.warn('Waitlist save failed:', err));
+
+  // Show the right state immediately
+  document.getElementById('wl-form-wrap').style.display = 'none';
+  if (isBeta) {
+    document.getElementById('wl-beta-wrap').style.display = 'block';
+  } else {
     const s = document.getElementById('wl-success-wrap');
     s.style.display = 'flex'; s.style.flexDirection = 'column';
-  } catch (err) {
-    console.error('Waitlist error:', err);
-    errEl.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Join Waitlist';
   }
 }
 </script>

@@ -1,0 +1,57 @@
+name: Add Waitlist Entry
+
+on:
+  workflow_dispatch:
+    inputs:
+      iv:
+        description: AES-GCM IV (base64)
+        required: true
+      ciphertext:
+        description: Encrypted payload (base64)
+        required: true
+      ts:
+        description: ISO timestamp
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  append:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Append encrypted entry to waitlist.json
+        run: |
+          python3 - <<'EOF'
+          import json, os
+
+          entry = {
+            "iv":         os.environ["IV"],
+            "ciphertext": os.environ["CT"],
+            "ts":         os.environ["TS"]
+          }
+
+          with open("waitlist.json", "r") as f:
+            data = json.load(f)
+
+          data.append(entry)
+
+          with open("waitlist.json", "w") as f:
+            json.dump(data, f, indent=2)
+
+          print(f"waitlist.json now has {len(data)} entries")
+          EOF
+        env:
+          IV: ${{ github.event.inputs.iv }}
+          CT: ${{ github.event.inputs.ciphertext }}
+          TS: ${{ github.event.inputs.ts }}
+
+      - name: Commit updated waitlist
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add waitlist.json
+          git commit -m "waitlist: add entry ${{ github.event.inputs.ts }}"
+          git push

@@ -2091,20 +2091,14 @@ function handleOverlayClick(e) {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWaitlist(); });
 
-// ── Configuration ──────────────────────────────────────────────────────────
-// HOW TO SET UP:
-// 1. Generate an AES key:  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-//    Paste it as WL_ENC_KEY below. Keep a copy — you need it to decrypt your waitlist.
-// 2. Create a fine-grained GitHub PAT at https://github.com/settings/tokens
-//    Repository access: only 'flowos_web'  |  Permission: Contents → Read and Write
-//    Paste it as WL_GH_TOKEN below.
-const WL_ENC_KEY  = 'REPLACE_WITH_BASE64_AES256_KEY=';   // 32-byte base64
-const WL_GH_TOKEN = 'REPLACE_WITH_GITHUB_PAT';
-const WL_GH_OWNER = 'iyerSharan';
-const WL_GH_REPO  = 'flowos_web';
-const WL_GH_FILE  = 'waitlist.json';
+// ── Configuration (values injected by GitHub Actions at deploy time) ────────
+const WL_ENC_KEY      = 'REPLACE_WITH_BASE64_AES256_KEY=';
+const WL_TRIGGER_TOK  = 'REPLACE_WITH_GITHUB_PAT';
+const WL_GH_OWNER     = 'iyerSharan';
+const WL_GH_REPO      = 'flowos_web';
+const WL_WORKFLOW     = 'add-waitlist-entry.yml';
 
-// ── AES-GCM Encryption ────────────────────────────────────────────────────
+// ── AES-GCM Encryption ──────────────────────────────────────────────���─────
 async function encryptEntry(obj) {
   const keyBytes = Uint8Array.from(atob(WL_ENC_KEY), c => c.charCodeAt(0));
   const key = await crypto.subtle.importKey('raw', keyBytes, 'AES-GCM', false, ['encrypt']);
@@ -2119,30 +2113,23 @@ async function encryptEntry(obj) {
   };
 }
 
-// ── GitHub Contents API ────────────────────────────────────────────────────
+// ── Trigger GitHub Actions workflow (writes to waitlist.json server-side) ──
 async function appendToWaitlist(entry) {
-  const url = `https://api.github.com/repos/${WL_GH_OWNER}/${WL_GH_REPO}/contents/${WL_GH_FILE}`;
-  const hdrs = {
-    Authorization: `token ${WL_GH_TOKEN}`,
-    Accept: 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
-  };
-  let entries = [], sha = null;
-  const get = await fetch(url, { headers: hdrs });
-  if (get.ok) {
-    const f = await get.json();
-    sha = f.sha;
-    entries = JSON.parse(atob(f.content.replace(/\s/g, '')));
-  } else if (get.status !== 404) throw new Error(`Read error ${get.status}`);
-
-  entries.push(entry);
-  const body = {
-    message: `waitlist: entry ${entry.ts}`,
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(entries, null, 2))))
-  };
-  if (sha) body.sha = sha;
-  const put = await fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
-  if (!put.ok) throw new Error(`Write error ${put.status}`);
+  const url = `https://api.github.com/repos/${WL_GH_OWNER}/${WL_GH_REPO}/actions/workflows/${WL_WORKFLOW}/dispatches`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `token ${WL_TRIGGER_TOK}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      ref: 'main',
+      inputs: { iv: entry.iv, ciphertext: entry.ciphertext, ts: entry.ts }
+    })
+  });
+  // 204 = workflow triggered successfully
+  if (res.status !== 204) throw new Error(`Dispatch error ${res.status}`);
 }
 
 // ── Form Submit ────────────────────────────────────────────────────────────

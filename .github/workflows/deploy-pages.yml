@@ -24,13 +24,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject secrets into HTML
+        run: |
+          # Replace placeholders with real values from GitHub Secrets.
+          # The deployed HTML has the live token; the source repo never stores it.
+          sed -i \
+            "s|REPLACE_WITH_BASE64_AES256_KEY=|${{ secrets.WL_ENC_KEY }}|g" \
+            index.html
+          sed -i \
+            "s|REPLACE_WITH_GITHUB_PAT|${{ secrets.WL_TRIGGER_TOKEN }}|g" \
+            index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Serve the repo root — index.html lives here
           path: '.'
 
       - name: Deploy to GitHub Pages

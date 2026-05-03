@@ -13,16 +13,18 @@ on:
         description: ISO timestamp
         required: true
 
-permissions:
-  contents: write
-
 jobs:
   append:
     runs-on: ubuntu-latest
     steps:
+      # Check out the PRIVATE waitlist repo using WL_WRITE_TOKEN
       - uses: actions/checkout@v4
+        with:
+          repository: iyerSharan/flowos-waitlist
+          token: ${{ secrets.WL_WRITE_TOKEN }}
+          path: waitlist-repo
 
-      - name: Append encrypted entry to waitlist.json
+      - name: Append encrypted entry
         run: |
           python3 - <<'EOF'
           import json, os
@@ -33,12 +35,13 @@ jobs:
             "ts":         os.environ["TS"]
           }
 
-          with open("waitlist.json", "r") as f:
+          path = "waitlist-repo/waitlist.json"
+          with open(path, "r") as f:
             data = json.load(f)
 
           data.append(entry)
 
-          with open("waitlist.json", "w") as f:
+          with open(path, "w") as f:
             json.dump(data, f, indent=2)
 
           print(f"waitlist.json now has {len(data)} entries")
@@ -48,10 +51,11 @@ jobs:
           CT: ${{ github.event.inputs.ciphertext }}
           TS: ${{ github.event.inputs.ts }}
 
-      - name: Commit updated waitlist
+      - name: Commit to private waitlist repo
         run: |
+          cd waitlist-repo
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add waitlist.json
-          git commit -m "waitlist: add entry ${{ github.event.inputs.ts }}"
+          git commit -m "waitlist: entry ${{ github.event.inputs.ts }}"
           git push

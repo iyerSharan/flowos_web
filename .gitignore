@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# ── Electron build outputs ──────────────────────────────────────────────────
+# App bundles (huge) — never commit these
+FlowOS/dist/*/mac-universal/
+FlowOS/dist/*/win-unpacked/
+FlowOS/dist/*/*.blockmap
+FlowOS/dist/*/builder-debug.yml
+FlowOS/dist/*/latest*.yml
+
+# Installers — too large for git (dmg=199 MB, exe=95 MB).
+# Upload them to the GitHub Release v0.1.0 instead (see README steps below).
+FlowOS/dist/**/*.dmg
+FlowOS/dist/**/*.exe
+
+# Node / dev
+node_modules/
+*.log

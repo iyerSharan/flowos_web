@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FlowOS — Your Local AI Brain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #000000;
+  --surface: #0a0a0a;
+  --card: #111111;
+  --border: #1c1c1e;
+  --border-light: #2c2c2e;
+  --text: #f5f5f7;
+  --text-secondary: #86868b;
+  --text-tertiary: #48484a;
+  --accent: #30d158;
+  --amber: #ff9f0a;
+  --blue: #0a84ff;
+  --purple: #bf5af2;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 52px;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid rgba(255,255,255,0.08);
+}
+
+.nav-logo {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.nav-logo span { color: var(--text-secondary); font-weight: 300; }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: var(--text);
+  color: var(--black);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 980px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* ── Sections ── */
+section {
+  position: relative;
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(48,209,88,0.08) 0%, transparent 70%);
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+  padding: 6px 14px;
+  border: 0.5px solid rgba(48,209,88,0.3);
+  border-radius: 980px;
+  background: rgba(48,209,88,0.06);
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hero h1 {
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  max-width: 900px;
+  margin-bottom: 24px;
+  background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 300;
+  color: var(--text-secondary);
+  max-width: 560px;
+  line-height: 1.5;
+  margin-bottom: 48px;
+  letter-spacing: -0.01em;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--text);
+  color: var(--black);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 980px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-secondary {
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-secondary::after { content: '›'; font-size: 18px; }
+
+.hero-meta {
+  margin-top: 64px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+}
+
+/* ── macOS window ── */
+.mac-window {
+  background: #141414;
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 0.5px rgba(255,255,255,0.05) inset;
+}
+.mac-titlebar {
+  height: 38px;
+  background: #1c1c1e;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+.mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+.mac-dot.red { background: #ff5f57; }
+.mac-dot.yellow { background: #febc2e; }
+.mac-dot.green { background: #28c840; }
+.mac-titlebar-label {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-right: 52px;
+}
+
+/* ── Section common ── */
+.section-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 120px 32px;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.section-label.amber { color: var(--amber); }
+.section-label.blue { color: var(--blue); }
+.section-label.purple { color: var(--purple); }
+
+.section-h2 {
+  font-size: clamp(36px, 4.5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-desc {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 500px;
+  letter-spacing: -0.01em;
+}
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ── Divider ── */
+.section-divider {
+  height: 0.5px;
+  background: var(--border);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ── ASK SECTION ── */
+.ask-section {
+  background: linear-gradient(180deg, #000 0%, #050508 50%, #000 100%);
+}
+
+.ask-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+@media (max-width: 800px) {
+  .ask-layout { grid-template-columns: 1fr; gap: 48px; }
+  .ask-layout .section-desc { max-width: 100%; }
+}
+
+/* FlowOS App mockup */
+.app-shell {
+  display: flex;
+  height: 460px;
+  font-size: 12px;
+}
+
+.app-sidebar {
+  width: 160px;
+  background: #0d0d0d;
+  border-right: 0.5px solid rgba(255,255,255,0.06);
+  padding: 16px 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  padding: 0 14px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  margin-bottom: 8px;
+}
+.sidebar-logo .v { font-size: 9px; color: var(--text-tertiary); font-weight: 400; display: block; margin-top: 2px; }
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 0;
+}
+.sidebar-item.active {
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+}
+.sidebar-item .icon { font-size: 13px; opacity: 0.7; }
+
+.sidebar-llm {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+}
+.llm-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #ccc;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ask-header {
+  padding: 16px 20px 12px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ask-history-panel {
+  width: 180px;
+  border-left: 0.5px solid rgba(255,255,255,0.06);
+  padding: 12px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 4px 6px 8px;
+}
+.history-item {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 5px 6px;
+  border-radius: 5px;
+  line-height: 1.3;
+  cursor: pointer;
+}
+.history-item:hover { background: rgba(255,255,255,0.04); }
+.history-time { font-size: 9px; color: var(--text-tertiary); margin-top: 2px; }
+
+.ask-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ask-convo {
+  flex: 1;
+  padding: 16px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ask-top-row {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.msg-user {
+  align-self: flex-end;
+  background: var(--blue);
+  color: #fff;
+  font-size: 11px;
+  padding: 7px 11px;
+  border-radius: 12px 12px 3px 12px;
+  max-width: 80%;
+  line-height: 1.4;
+}
+
+.msg-ai {
+  align-self: flex-start;
+  max-width: 90%;
+}
+.msg-ai-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.msg-ai-body {
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 3px 12px 12px 12px;
+  padding: 9px 12px;
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 1.5px;
+  height: 11px;
+  background: var(--text);
+  margin-left: 1px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.ask-input-row {
+  padding: 10px 20px 14px;
+  display: flex;
+  gap: 8px;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+  align-items: center;
+  flex-shrink: 0;
+}
+.ask-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ask-input:focus { border-color: var(--blue); }
+.ask-input::placeholder { color: var(--text-tertiary); }
+.ask-send-btn {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── FILES SECTION ── */
+.files-section { background: #000; }
+
+.files-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+@media (max-width: 800px) { .files-layout { grid-template-columns: 1fr; gap: 48px; } }
+
+.files-app {
+  height: 400px;
+  display: flex;
+}
+
+.files-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.files-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.files-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.files-count {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.07);
+  padding: 2px 7px;
+  border-radius: 980px;
+}
+.files-add-btn {
+  background: rgba(10,132,255,0.15);
+  border: 0.5px solid rgba(10,132,255,0.3);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.files-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.file-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.file-row:hover { background: rgba(255,255,255,0.03); }
+.file-icon {
+  width: 28px;
+  height: 34px;
+  background: #1c1c1e;
+  border-radius: 4px;
+  border: 0.5px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.file-info { flex: 1; min-width: 0; }
+.file-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.file-tag {
+  font-size: 8px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.tag-report { background: rgba(48,209,88,0.12); color: var(--accent); }
+.tag-datasheet { background: rgba(10,132,255,0.12); color: var(--blue); }
+.file-meta { font-size: 9px; color: var(--text-tertiary); margin-top: 2px; }
+.file-excerpt { font-size: 10px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── FEATURES GRID ── */
+.features-section { background: var(--surface); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 64px;
+}
+
+@media (max-width: 700px) { .features-grid { grid-template-columns: 1fr; } }
+
+.feature-card {
+  background: var(--surface);
+  padding: 40px 32px;
+  transition: background 0.2s;
+}
+.feature-card:hover { background: #131313; }
+
+.feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+.feature-icon.green { background: rgba(48,209,88,0.1); }
+.feature-icon.amber { background: rgba(255,159,10,0.1); }
+.feature-icon.blue { background: rgba(10,132,255,0.1); }
+.feature-icon.purple { background: rgba(191,90,242,0.1); }
+.feature-icon.red { background: rgba(255,69,58,0.1); }
+.feature-icon.teal { background: rgba(90,200,250,0.1); }
+
+.feature-title {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.feature-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+/* ── OVERVIEW SECTION ── */
+.overview-section { background: #000; }
+
+.overview-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+@media (max-width: 800px) { .overview-layout { grid-template-columns: 1fr; gap: 48px; } }
+
+.overview-app {
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.overview-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.overview-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.overview-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.analyze-btn {
+  background: rgba(255,255,255,0.07);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.overview-section-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 10px 16px 6px;
+}
+
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+}
+.date-badge {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: rgba(255,255,255,0.05);
+  padding: 3px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.date-text {
+  font-size: 11px;
+  color: var(--text);
+}
+.date-file {
+  font-size: 9px;
+  color: var(--text-tertiary);
+}
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 6px 16px 12px;
+}
+.contact-card {
+  background: rgba(255,255,255,0.03);
+  border: 0.5px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+}
+.contact-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.contact-name { font-size: 10px; font-weight: 500; color: var(--text); line-height: 1.3; }
+.contact-role { font-size: 9px; color: var(--text-tertiary); margin-top: 1px; }
+
+/* ── MEMORY / WRAP SECTION ── */
+.memory-section { background: var(--surface); }
+
+.memory-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+@media (max-width: 800px) { .memory-layout { grid-template-columns: 1fr; gap: 48px; } }
+
+.memory-app {
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.memory-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.memory-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.memory-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.memory-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+}
+.memory-check {
+  width: 14px;
+  height: 14px;
+  border: 0.5px solid rgba(255,255,255,0.2);
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.memory-check.checked {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.memory-check.checked::after {
+  content: '✓';
+  font-size: 9px;
+  color: #fff;
+  font-weight: 700;
+}
+.memory-file-name { font-size: 11px; color: var(--text); flex: 1; }
+.memory-pages { font-size: 10px; color: var(--text-tertiary); }
+
+.chat-section-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 10px 16px 4px;
+}
+
+.memory-chat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+}
+.memory-chat-text { font-size: 10px; color: var(--text-secondary); flex: 1; }
+
+.memory-footer {
+  padding: 12px 16px;
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+  display: flex;
+  gap: 6px;
+}
+.mem-btn {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+}
+.mem-btn.primary { background: var(--blue); color: #fff; }
+.mem-btn.outline {
+  background: transparent;
+  border: 0.5px solid rgba(255,255,255,0.15);
+  color: var(--text-secondary);
+}
+
+/* ── PRIVACY SECTION ── */
+.privacy-section {
+  background: linear-gradient(180deg, #000 0%, #050510 50%, #000 100%);
+}
+
+.privacy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+}
+@media (max-width: 700px) { .privacy-grid { grid-template-columns: 1fr; } }
+
+.privacy-card {
+  background: rgba(255,255,255,0.02);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+}
+.privacy-card-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.privacy-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.privacy-card-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.privacy-hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 32px;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  text-align: center;
+  margin-top: 64px;
+}
+.stat-number {
+  font-size: clamp(64px, 10vw, 120px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 17px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+  font-weight: 300;
+}
+
+/* ── MODELS SECTION ── */
+.models-section { background: #000; }
+
+.models-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+.model-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 0.5px solid var(--border-light);
+  border-radius: 980px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.02);
+  transition: all 0.2s;
+}
+.model-pill:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+}
+.model-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+}
+.model-dot.blue { background: var(--blue); }
+.model-dot.purple { background: var(--purple); }
+.model-dot.amber { background: var(--amber); }
+
+.models-browse {
+  margin-top: 48px;
+}
+
+.browse-window {
+  max-width: 580px;
+}
+
+.browse-header {
+  padding: 14px 18px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.browse-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.browse-system-info {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.browse-system-info strong { color: var(--text); }
+
+.browse-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 14px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.browse-tab {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+.browse-tab.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.browse-model-list {
+  padding: 8px 0;
+}
+
+.browse-model-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.browse-model-row:hover { background: rgba(255,255,255,0.03); }
+.browse-model-check {
+  width: 14px;
+  height: 14px;
+  border: 0.5px solid rgba(255,255,255,0.2);
+  border-radius: 3px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.browse-model-info { flex: 1; }
+.browse-model-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.browse-model-size { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+.browse-model-desc { font-size: 10px; color: var(--text-tertiary); margin-top: 3px; line-height: 1.4; }
+
+.badge {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-rec { background: rgba(255,159,10,0.15); color: var(--amber); }
+.badge-ram { background: rgba(48,209,88,0.12); color: var(--accent); }
+.badge-chat { background: rgba(10,132,255,0.12); color: var(--blue); }
+
+/* ── CTA ── */
+.cta-section {
+  background: linear-gradient(180deg, #000 0%, #050508 100%);
+  text-align: center;
+}
+
+.cta-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 120px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cta-h2 {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.65) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cta-desc {
+  font-size: 17px;
+  color: var(--text-secondary);
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 48px;
+}
+
+.cta-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta-platform {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 24px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Footer ── */
+footer {
+  border-top: 0.5px solid var(--border);
+  padding: 32px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ── Hero window ── */
+.hero-window-wrap {
+  margin-top: 64px;
+  width: 100%;
+  max-width: 860px;
+  position: relative;
+}
+
+.hero-glow {
+  position: absolute;
+  inset: -60px;
+  background: radial-gradient(ellipse at 50% 80%, rgba(48,209,88,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── Download Dropdown ── */
+.download-wrap { position: relative; display: inline-block; }
+.download-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1c1e;
+  border: 0.5px solid rgba(255,255,255,0.14);
+  border-radius: 14px;
+  padding: 6px;
+  min-width: 260px;
+  z-index: 300;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+}
+.download-dropdown.open { display: block; }
+.dl-section-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 8px 12px 4px;
+}
+.dl-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.dl-option:hover { background: rgba(255,255,255,0.07); }
+.dl-icon { font-size: 18px; line-height: 1; flex-shrink: 0; }
+.dl-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.dl-sub { font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
+.dl-divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 4px 6px; }
+
+/* ── Waitlist Modal ── */
+.waitlist-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+}
+.waitlist-overlay.open { display: flex; }
+.waitlist-modal {
+  background: #141414;
+  border: 0.5px solid rgba(255,255,255,0.13);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  margin: 24px;
+  box-shadow: 0 48px 120px rgba(0,0,0,0.85);
+  position: relative;
+  animation: modalIn 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+.wl-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: rgba(255,255,255,0.07);
+  border: none;
+  color: var(--text-secondary);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.wl-close:hover { background: rgba(255,255,255,0.13); color: var(--text); }
+.wl-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 16px; padding: 5px 12px;
+  border: 0.5px solid rgba(48,209,88,0.3); border-radius: 980px;
+  background: rgba(48,209,88,0.06);
+}
+.wl-title { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px; line-height: 1.1; }
+.wl-desc { font-size: 14px; color: var(--text-secondary); font-weight: 300; line-height: 1.55; margin-bottom: 28px; }
+.wl-field { margin-bottom: 14px; }
+.wl-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+.wl-input { width: 100%; background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 11px 14px; font-size: 14px; color: var(--text); font-family: inherit; outline: none; transition: border-color 0.2s; }
+.wl-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(48,209,88,0.08); }
+.wl-input::placeholder { color: var(--text-tertiary); }
+.wl-plan-label-text { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+.wl-plan-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+.wl-plan-opt { position: relative; }
+.wl-plan-opt input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.wl-plan-card { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 14px 10px; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: all 0.15s; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-align: center; user-select: none; }
+.wl-plan-card .plan-icon { font-size: 20px; }
+.wl-plan-card .plan-sub { font-size: 10px; color: var(--text-tertiary); font-weight: 400; }
+.wl-plan-opt input:checked + .wl-plan-card { border-color: var(--accent); background: rgba(48,209,88,0.07); color: var(--text); }
+.wl-submit { width: 100%; background: var(--text); color: var(--black); border: none; padding: 14px; border-radius: 980px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.2s; letter-spacing: -0.01em; }
+.wl-submit:hover:not(:disabled) { opacity: 0.85; }
+.wl-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+.wl-privacy { text-align: center; font-size: 11px; color: var(--text-tertiary); margin-top: 12px; line-height: 1.4; }
+.wl-error { font-size: 12px; color: #ff453a; margin-top: 10px; text-align: center; display: none; }
+.wl-success { display: none; flex-direction: column; align-items: center; text-align: center; padding: 12px 0 8px; }
+.wl-success-icon { width: 56px; height: 56px; background: rgba(48,209,88,0.12); border: 0.5px solid rgba(48,209,88,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+.wl-success-title { font-size: 22px; font-weight: 700; letter-spacing: -0.025em; color: var(--text); margin-bottom: 8px; }
+.wl-success-desc { font-size: 14px; color: var(--text-secondary); font-weight: 300; line-height: 1.55; max-width: 280px; }
+.wl-success-close { margin-top: 28px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.12); color: var(--text-secondary); padding: 10px 24px; border-radius: 980px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.wl-success-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+button.btn-secondary { background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Flow<span>OS</span></div>
+  <ul class="nav-links">
+    <li><a href="#ask">Ask Brain</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#memory">Wrap Memory</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#models">Models</a></li>
+  </ul>
+  <button onclick="openWaitlist()" class="nav-cta" style="border:none;cursor:pointer;font-family:inherit;">Join Beta</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow reveal"><span class="status-dot"></span>Local AI · 100% On-Device</div>
+  <h1 class="reveal reveal-delay-1">Your files.<br />Your machine.<br />Your brain.</h1>
+  <p class="hero-sub reveal reveal-delay-2">FlowOS indexes everything on your Mac. Ask questions, surface contacts, export memories — all running locally through Ollama. Zero bytes ever leave your machine.</p>
+  <div class="hero-btns reveal reveal-delay-3">
+    <div class="download-wrap">
+      <button class="btn-primary" onclick="toggleDownload(event,'hero-dl')" style="border:none;cursor:pointer;font-family:inherit;">Download ↓</button>
+      <div class="download-dropdown" id="hero-dl">
+        <div class="dl-section-label">General</div>
+        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-0.1.0-universal.dmg" class="dl-option">
+          <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS-0.1.0-universal.dmg</div></div>
+        </a>
+        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-Setup-0.1.0.exe" class="dl-option">
+          <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS-Setup-0.1.0.exe</div></div>
+        </a>
+        <div class="dl-divider"></div>
+        <div class="dl-section-label">Business</div>
+        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-Business-0.1.0-universal.dmg" class="dl-option">
+          <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS-Business-0.1.0-universal.dmg</div></div>
+        </a>
+        <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-Business-Setup-0.1.0.exe" class="dl-option">
+          <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS-Business-Setup-0.1.0.exe</div></div>
+        </a>
+      </div>
+    </div>
+    <a href="#ask" class="btn-secondary">See it in action</a>
+  </div>
+
+  <div class="hero-window-wrap reveal reveal-delay-3">
+    <div class="hero-glow"></div>
+    <div class="mac-window">
+      <div class="mac-titlebar">
+        <div class="mac-dot red"></div>
+        <div class="mac-dot yellow"></div>
+        <div class="mac-dot green"></div>
+        <div class="mac-titlebar-label">FlowOS — Your Files</div>
+      </div>
+      <div style="display:flex; height:320px;">
+        <!-- sidebar -->
+        <div class="app-sidebar">
+          <div class="sidebar-logo">Flow<span style="font-weight:700">OS</span><span class="v">v0.1.0</span></div>
+          <div class="sidebar-item active"><span class="icon">▤</span> Files</div>
+          <div class="sidebar-item"><span class="icon">💬</span> Ask</div>
+          <div class="sidebar-item"><span class="icon">◎</span> Overview</div>
+          <div class="sidebar-item"><span class="icon">⚡</span> Memory</div>
+          <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+          <div class="sidebar-llm">LLM STATUS<div class="llm-status"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent)"></span> Ollama running</div></div>
+        </div>
+        <!-- files -->
+        <div class="files-main">
+          <div class="files-topbar">
+            <div class="files-title">Your Files <span class="files-count">7 indexed</span></div>
+            <button class="files-add-btn">+ Add Files</button>
+          </div>
+          <div class="files-list">
+            <div class="file-row" id="file-1">
+              <div class="file-icon">PDF</div>
+              <div class="file-info">
+                <div class="file-name">Q1_Strategy_Report.pdf <span class="file-tag tag-report">REPORT</span></div>
+                <div class="file-meta">12 pages · Indexed May 2, 2026 · 844 KB</div>
+                <div class="file-excerpt">This document outlines the key strategic objectives and OKRs for Q1 2026, including market expansion...</div>
+              </div>
+            </div>
+            <div class="file-row">
+              <div class="file-icon">TXT</div>
+              <div class="file-info">
+                <div class="file-name">meeting_notes.txt <span class="file-tag tag-report">REPORT</span></div>
+                <div class="file-meta">1 page · Indexed May 1, 2026 · 2 KB</div>
+                <div class="file-excerpt">Key decisions and action items from the project kickoff meeting, Q2 planning, backend dev with FastAPI...</div>
+              </div>
+            </div>
+            <div class="file-row">
+              <div class="file-icon">PDF</div>
+              <div class="file-info">
+                <div class="file-name">sensor_datasheet.pdf <span class="file-tag tag-datasheet">DATASHEET</span></div>
+                <div class="file-meta">161 pages · Indexed Apr 30, 2026 · 4.5 MB</div>
+                <div class="file-excerpt">Technical datasheet for a programmable ultra-low power smart sensor with integrated accelerometer...</div>
+              </div>
+            </div>
+            <div class="file-row">
+              <div class="file-icon">PDF</div>
+              <div class="file-info">
+                <div class="file-name">contract_draft_v3.pdf <span class="file-tag tag-report">REPORT</span></div>
+                <div class="file-meta">8 pages · Indexed Apr 28, 2026 · 312 KB</div>
+                <div class="file-excerpt">Service agreement between parties, covering scope of work, deliverables, payment terms and...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-meta reveal">macOS 10.15 or later · Apple Silicon &amp; Intel · Windows 8 or later</div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ASK SECTION -->
+<section class="ask-section" id="ask">
+  <div class="section-inner">
+    <div class="ask-layout">
+      <!-- text -->
+      <div>
+        <div class="section-label reveal">Ask Brain</div>
+        <h2 class="section-h2 reveal reveal-delay-1">Ask anything.<br />Across all<br />your documents.</h2>
+        <p class="section-desc reveal reveal-delay-2">Drop any PDF, DOCX, or TXT into your watch folder. FlowOS indexes every word locally using vector embeddings. Then just ask — natural language, complex questions, cross-document synthesis.</p>
+        <div style="margin-top:32px; display:flex; flex-direction:column; gap:12px;" class="reveal reveal-delay-3">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--accent);font-size:16px;">✓</span> Natural language questions across all files
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--accent);font-size:16px;">✓</span> Cross-document synthesis and comparison
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--accent);font-size:16px;">✓</span> Powered by Ollama — runs entirely on-device
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--accent);font-size:16px;">✓</span> Full conversation history saved locally
+          </div>
+        </div>
+      </div>
+      <!-- animated app mockup -->
+      <div class="reveal reveal-delay-2">
+        <div class="mac-window">
+          <div class="mac-titlebar">
+            <div class="mac-dot red"></div>
+            <div class="mac-dot yellow"></div>
+            <div class="mac-dot green"></div>
+            <div class="mac-titlebar-label">Ask FlowOS</div>
+          </div>
+          <div class="app-shell">
+            <div class="app-sidebar" style="width:130px;">
+              <div class="sidebar-logo" style="font-size:12px;">Flow<strong>OS</strong><span class="v">v0.1.0</span></div>
+              <div class="sidebar-item"><span class="icon">▤</span> Files</div>
+              <div class="sidebar-item active"><span class="icon">💬</span> Ask</div>
+              <div class="sidebar-item"><span class="icon">◎</span> Overview</div>
+              <div class="sidebar-item"><span class="icon">⚡</span> Memory</div>
+              <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+              <div class="sidebar-llm">LLM STATUS<div class="llm-status"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent)"></span> Ollama running</div></div>
+            </div>
+            <div class="app-main">
+              <div class="ask-header">Ask FlowOS</div>
+              <div class="ask-top-row">
+                <div class="ask-body">
+                  <div class="ask-convo" id="ask-convo">
+                    <!-- messages injected by JS -->
+                  </div>
+                  <div class="ask-input-row">
+                    <input class="ask-input" id="ask-input-field" placeholder="Ask anything about your files..." readonly />
+                    <button class="ask-send-btn" id="ask-send-btn">Send</button>
+                  </div>
+                </div>
+                <div class="ask-history-panel">
+                  <div class="history-label">History</div>
+                  <div class="history-item">Summarise Q1 strategy<div class="history-time">2h ago</div></div>
+                  <div class="history-item">Who are the contacts<div class="history-time">3h ago</div></div>
+                  <div class="history-item">Compare the reports<div class="history-time">4h ago</div></div>
+                  <div class="history-item">Key dates in contract<div class="history-time">5h ago</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FILES SECTION -->
+<section class="files-section" id="files">
+  <div class="section-inner">
+    <div class="files-layout">
+      <div class="reveal">
+        <div class="mac-window">
+          <div class="mac-titlebar">
+            <div class="mac-dot red"></div>
+            <div class="mac-dot yellow"></div>
+            <div class="mac-dot green"></div>
+            <div class="mac-titlebar-label">Your Files</div>
+          </div>
+          <div class="files-app">
+            <div class="app-sidebar" style="width:130px;">
+              <div class="sidebar-logo" style="font-size:12px;">Flow<strong>OS</strong><span class="v">v0.1.0</span></div>
+              <div class="sidebar-item active"><span class="icon">▤</span> Files</div>
+              <div class="sidebar-item"><span class="icon">💬</span> Ask</div>
+              <div class="sidebar-item"><span class="icon">◎</span> Overview</div>
+              <div class="sidebar-item"><span class="icon">⚡</span> Memory</div>
+              <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+              <div class="sidebar-llm">LLM STATUS<div class="llm-status"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent)"></span> Ollama running</div></div>
+            </div>
+            <div class="files-main">
+              <div class="files-topbar">
+                <div class="files-title">Your Files <span class="files-count">7 indexed</span></div>
+                <button class="files-add-btn">+ Add Files</button>
+              </div>
+              <div class="files-list">
+                <div class="file-row"><div class="file-icon">PDF</div><div class="file-info"><div class="file-name">Q1_Strategy_Report.pdf<span class="file-tag tag-report" style="margin-left:6px">REPORT</span></div><div class="file-meta">12p · May 2, 2026 · 844 KB</div></div></div>
+                <div class="file-row"><div class="file-icon">PDF</div><div class="file-info"><div class="file-name">contract_draft_v3.pdf<span class="file-tag tag-report" style="margin-left:6px">REPORT</span></div><div class="file-meta">8p · May 1, 2026 · 312 KB</div></div></div>
+                <div class="file-row"><div class="file-icon">TXT</div><div class="file-info"><div class="file-name">meeting_notes.txt<span class="file-tag tag-report" style="margin-left:6px">REPORT</span></div><div class="file-meta">1p · Apr 30, 2026 · 2 KB</div></div></div>
+                <div class="file-row"><div class="file-icon">PDF</div><div class="file-info"><div class="file-name">sensor_datasheet.pdf<span class="file-tag tag-datasheet" style="margin-left:6px">DATASHEET</span></div><div class="file-meta">161p · Apr 28, 2026 · 4.5 MB</div></div></div>
+                <div class="file-row"><div class="file-icon">PDF</div><div class="file-info"><div class="file-name">financial_summary.pdf<span class="file-tag tag-report" style="margin-left:6px">REPORT</span></div><div class="file-meta">19p · Apr 28, 2026 · 787 KB</div></div></div>
+                <div class="file-row"><div class="file-icon">PDF</div><div class="file-info"><div class="file-name">component_spec.pdf<span class="file-tag tag-datasheet" style="margin-left:6px">DATASHEET</span></div><div class="file-meta">37p · Apr 27, 2026 · 3.3 MB</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label blue reveal">Your Files</div>
+        <h2 class="section-h2 reveal reveal-delay-1">Drop files.<br />Instant brain.</h2>
+        <p class="section-desc reveal reveal-delay-2">Point FlowOS at a folder. Every PDF, DOCX, and TXT is automatically chunked, embedded, and indexed locally. Drag in new files — they appear instantly.</p>
+        <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;" class="reveal reveal-delay-3">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--blue);font-size:16px;">✓</span> PDF, DOCX, TXT support
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--blue);font-size:16px;">✓</span> Auto-detected tags: Report, Datasheet, Contract
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--blue);font-size:16px;">✓</span> Stored in ChromaDB on your machine
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--blue);font-size:16px;">✓</span> Watch folder — always in sync
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FEATURES GRID -->
+<section class="features-section">
+  <div class="section-inner" style="padding-bottom:120px;">
+    <div class="section-label reveal">Everything included</div>
+    <h2 class="section-h2 reveal reveal-delay-1">One app.<br />Every use case.</h2>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon green">🧠</div>
+        <div class="feature-title">Ask Brain</div>
+        <div class="feature-desc">Natural language Q&amp;A across your entire document library. Ask deep, multi-step questions. Cross-reference files. Get cited answers sourced from your own data.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon blue">📂</div>
+        <div class="feature-title">Local Indexing</div>
+        <div class="feature-desc">Drop any file into your watch folder. FlowOS chunks and embeds it instantly using nomic-embed-text. 100% on-device. No cloud upload. No API calls.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon amber">⚡</div>
+        <div class="feature-title">Wrap Memory</div>
+        <div class="feature-desc">Select files and chat sessions, click Generate — and get a portable encrypted .flowwrap bundle. Import it anywhere to resume exactly where you left off.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon purple">◎</div>
+        <div class="feature-title">Overview Analyst</div>
+        <div class="feature-desc">FlowOS extracts contacts, dates, and key events from all your documents. Surfaces a contacts directory and timeline automatically — no manual tagging.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon teal">🔒</div>
+        <div class="feature-title">Zero Data Egress</div>
+        <div class="feature-desc">Everything — embeddings, vector search, LLM inference — runs on your Mac via Ollama. Not one byte leaves your machine. No accounts. No telemetry.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon red">⚙</div>
+        <div class="feature-title">Model Choice</div>
+        <div class="feature-desc">Browse and pull any Ollama model directly from FlowOS. Llama 3, Mistral, Gemma, Phi — optimised recommendations based on your available RAM.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- OVERVIEW SECTION -->
+<section class="overview-section" id="overview">
+  <div class="section-inner">
+    <div class="overview-layout">
+      <div>
+        <div class="section-label purple reveal">Overview</div>
+        <h2 class="section-h2 reveal reveal-delay-1">Your documents.<br />Surface their<br />intelligence.</h2>
+        <p class="section-desc reveal reveal-delay-2">Overview runs a local AI analysis across your entire file library — extracting key dates, contacts, and events. One click to analyze everything. Nothing leaves your machine.</p>
+        <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;" class="reveal reveal-delay-3">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-size:16px;">✓</span> Auto-extracted contacts directory from all files
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-size:16px;">✓</span> Key dates and deadlines surfaced automatically
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-size:16px;">✓</span> One-click Analyze to refresh intelligence
+          </div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="mac-window">
+          <div class="mac-titlebar">
+            <div class="mac-dot red"></div>
+            <div class="mac-dot yellow"></div>
+            <div class="mac-dot green"></div>
+            <div class="mac-titlebar-label">Overview</div>
+          </div>
+          <div class="overview-app">
+            <div class="app-sidebar" style="width:130px;flex-shrink:0;display:flex;flex-direction:column;">
+              <div class="sidebar-logo" style="font-size:12px;">Flow<strong>OS</strong><span class="v">v0.1.0</span></div>
+              <div class="sidebar-item"><span class="icon">▤</span> Files</div>
+              <div class="sidebar-item"><span class="icon">💬</span> Ask</div>
+              <div class="sidebar-item active"><span class="icon">◎</span> Overview</div>
+              <div class="sidebar-item"><span class="icon">⚡</span> Memory</div>
+              <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+              <div class="sidebar-llm">LLM STATUS<div class="llm-status"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent)"></span> Ollama running</div></div>
+            </div>
+            <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+              <div class="overview-topbar">
+                <span class="overview-title">Overview</span>
+                <button class="analyze-btn">Analyze</button>
+              </div>
+              <div class="overview-main">
+                <div class="overview-section-label">KEY DATES</div>
+                <div class="date-row"><div class="date-badge">Q2 2026</div><div><div class="date-text">Project kickoff deadline</div><div class="date-file">📄 meeting_notes.txt</div></div></div>
+                <div class="date-row"><div class="date-badge">May 15</div><div><div class="date-text">Contract review due</div><div class="date-file">📄 contract_draft_v3.pdf</div></div></div>
+                <div class="date-row"><div class="date-badge">No date</div><div><div class="date-text">Release Date</div><div class="date-file">📄 sensor_datasheet.pdf</div></div></div>
+                <div class="overview-section-label">CONTACTS DIRECTORY</div>
+                <div class="contacts-grid">
+                  <div class="contact-card"><div class="contact-avatar" style="background:#5e5ce6;">AL</div><div><div class="contact-name">Alice Chen</div><div class="contact-role">Frontend UI Designer</div></div></div>
+                  <div class="contact-card"><div class="contact-avatar" style="background:#30d158;">BS</div><div><div class="contact-name">Bosch Sensortec</div><div class="contact-role">Manufacturer</div></div></div>
+                  <div class="contact-card"><div class="contact-avatar" style="background:#ff9f0a;">SH</div><div><div class="contact-name">Sharan</div><div class="contact-role">Project Lead</div></div></div>
+                  <div class="contact-card"><div class="contact-avatar" style="background:#0a84ff;">OL</div><div><div class="contact-name">Ollama</div><div class="contact-role">LLM Inference</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- MEMORY SECTION -->
+<section class="memory-section" id="memory">
+  <div class="section-inner">
+    <div class="memory-layout">
+      <div class="reveal reveal-delay-1">
+        <div class="mac-window">
+          <div class="mac-titlebar">
+            <div class="mac-dot red"></div>
+            <div class="mac-dot yellow"></div>
+            <div class="mac-dot green"></div>
+            <div class="mac-titlebar-label">⚡ Wrap Memory</div>
+          </div>
+          <div class="memory-app">
+            <div style="display:flex;flex:1;overflow:hidden;">
+              <div class="app-sidebar" style="width:130px;flex-shrink:0;display:flex;flex-direction:column;">
+                <div class="sidebar-logo" style="font-size:12px;">Flow<strong>OS</strong><span class="v">v0.1.0</span></div>
+                <div class="sidebar-item"><span class="icon">▤</span> Files</div>
+                <div class="sidebar-item"><span class="icon">💬</span> Ask</div>
+                <div class="sidebar-item"><span class="icon">◎</span> Overview</div>
+                <div class="sidebar-item active"><span class="icon">⚡</span> Memory</div>
+                <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+                <div class="sidebar-llm">LLM STATUS<div class="llm-status"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent)"></span> Ollama running</div></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+                <div class="memory-topbar">
+                  <span class="memory-title">⚡ Wrap Memory</span>
+                </div>
+                <div class="memory-main">
+                  <div class="memory-row"><div class="memory-check checked"></div><div class="memory-file-name">Q1_Strategy_Report.pdf</div><div class="memory-pages">12p</div></div>
+                  <div class="memory-row"><div class="memory-check checked"></div><div class="memory-file-name">contract_draft_v3.pdf</div><div class="memory-pages">8p</div></div>
+                  <div class="memory-row"><div class="memory-check"></div><div class="memory-file-name">meeting_notes.txt</div><div class="memory-pages">1p</div></div>
+                  <div class="memory-row"><div class="memory-check checked"></div><div class="memory-file-name">sensor_datasheet.pdf</div><div class="memory-pages">161p</div></div>
+                  <div class="memory-row"><div class="memory-check"></div><div class="memory-file-name">financial_summary.pdf</div><div class="memory-pages">19p</div></div>
+                  <div class="chat-section-label">SELECT CHAT SESSIONS</div>
+                  <div class="memory-chat-row"><div class="memory-check checked"></div><div class="memory-chat-text">Summarise Q1 strategy highlights</div></div>
+                  <div class="memory-chat-row"><div class="memory-check checked"></div><div class="memory-chat-text">What are the contract red flags?</div></div>
+                  <div class="memory-chat-row"><div class="memory-check"></div><div class="memory-chat-text">Compare sensor specs in the datasheet</div></div>
+                </div>
+                <div class="memory-footer">
+                  <button class="mem-btn primary">Generate Memory</button>
+                  <button class="mem-btn outline">Export .flowwrap</button>
+                  <button class="mem-btn outline">Import .flowwrap</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label amber reveal">Wrap Memory</div>
+        <h2 class="section-h2 reveal reveal-delay-1">Pack your brain.<br />Take it<br />anywhere.</h2>
+        <p class="section-desc reveal reveal-delay-2">Select files and chat sessions, generate a .flowwrap bundle. Import it on another machine to resume your exact context — documents, embeddings, and conversations intact.</p>
+        <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;" class="reveal reveal-delay-3">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--amber);font-size:16px;">✓</span> Portable .flowwrap encrypted bundle format
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--amber);font-size:16px;">✓</span> Includes files, embeddings &amp; chat history
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--amber);font-size:16px;">✓</span> Import anywhere — context resumes instantly
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--amber);font-size:16px;">✓</span> Encrypted — your data stays private in transit
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PRIVACY SECTION -->
+<section class="privacy-section" id="privacy">
+  <div class="section-inner">
+    <div class="section-label reveal">Privacy First</div>
+    <h2 class="section-h2 reveal reveal-delay-1" style="max-width:600px;">Built for people<br />who take privacy seriously.</h2>
+    <p class="section-desc reveal reveal-delay-2">Every single operation in FlowOS runs on your Mac. Indexing. Embedding. LLM inference. Vector search. There is no server. No telemetry.</p>
+
+    <div class="privacy-hero-stat reveal">
+      <div class="stat-number">0</div>
+      <div class="stat-label">bytes ever sent to any server</div>
+    </div>
+
+    <div class="privacy-grid">
+      <div class="privacy-card reveal">
+        <div class="privacy-card-icon">🖥</div>
+        <div class="privacy-card-title">Runs on your Mac</div>
+        <div class="privacy-card-desc">FlowOS is a native macOS app. LLM inference runs via Ollama directly on your CPU or Apple Silicon GPU. No internet connection required after setup.</div>
+      </div>
+      <div class="privacy-card reveal reveal-delay-1">
+        <div class="privacy-card-icon">🗄</div>
+        <div class="privacy-card-title">Local vector database</div>
+        <div class="privacy-card-desc">All embeddings and document indexes are stored in ChromaDB on your local filesystem. The database lives in your home folder. You own it entirely.</div>
+      </div>
+      <div class="privacy-card reveal reveal-delay-2">
+        <div class="privacy-card-icon">🔑</div>
+        <div class="privacy-card-title">No account required</div>
+        <div class="privacy-card-desc">FlowOS has no login, no user account, no subscription. Download and run. Your files never touch any authentication server or identity provider.</div>
+      </div>
+      <div class="privacy-card reveal reveal-delay-3">
+        <div class="privacy-card-icon">📦</div>
+        <div class="privacy-card-title">Encrypted memory packs</div>
+        <div class="privacy-card-desc">When you export a .flowwrap bundle, it's encrypted before it touches disk. Only the machine that imports it can read the contents.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- MODELS SECTION -->
+<section class="models-section" id="models">
+  <div class="section-inner">
+    <div class="overview-layout">
+      <div>
+        <div class="section-label blue reveal">Your Model. Your Choice.</div>
+        <h2 class="section-h2 reveal reveal-delay-1">Run any<br />Ollama model.</h2>
+        <p class="section-desc reveal reveal-delay-2">FlowOS recommends models based on your available RAM and use case. Browse and pull directly from inside the app. Switch models any time.</p>
+        <div class="models-row reveal reveal-delay-3">
+          <div class="model-pill"><span class="model-dot"></span> Llama 3.2</div>
+          <div class="model-pill"><span class="model-dot blue"></span> Gemma 2</div>
+          <div class="model-pill"><span class="model-dot purple"></span> Mistral 7B</div>
+          <div class="model-pill"><span class="model-dot amber"></span> Phi-3 Mini</div>
+          <div class="model-pill"><span class="model-dot blue"></span> Llama 3.1</div>
+          <div class="model-pill"><span class="model-dot"></span> + more</div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="mac-window browse-window">
+          <div class="mac-titlebar">
+            <div class="mac-dot red"></div>
+            <div class="mac-dot yellow"></div>
+            <div class="mac-dot green"></div>
+            <div class="mac-titlebar-label">Browse &amp; Manage Models</div>
+          </div>
+          <div class="browse-header">
+            <div class="browse-title">↓ Browse &amp; Manage Models</div>
+            <div class="browse-system-info"><strong>Your system:</strong> 8 GB RAM — <strong>★ Recommended</strong> models run optimally on this hardware</div>
+          </div>
+          <div class="browse-tabs">
+            <button class="browse-tab active">All</button>
+            <button class="browse-tab">Chat</button>
+            <button class="browse-tab">Embedding</button>
+            <button class="browse-tab">Recommended</button>
+          </div>
+          <div class="browse-model-list">
+            <div class="browse-model-row">
+              <div class="browse-model-check"></div>
+              <div class="browse-model-info">
+                <div class="browse-model-name">Llama 3.2 1B <span class="badge badge-rec">★ Rec</span><span class="badge badge-ram">Fits RAM</span><span class="badge badge-chat">Chat</span></div>
+                <div class="browse-model-size">0.7 GB · min 2 GB RAM</div>
+                <div class="browse-model-desc">Meta's ultra-fast 1B model — good for simple Q&amp;A on low-RAM machines.</div>
+              </div>
+            </div>
+            <div class="browse-model-row">
+              <div class="browse-model-check"></div>
+              <div class="browse-model-info">
+                <div class="browse-model-name">Gemma 2 2B <span class="badge badge-rec">★ Rec</span><span class="badge badge-ram">Fits RAM</span><span class="badge badge-chat">Chat</span></div>
+                <div class="browse-model-size">1.6 GB · min 4 GB RAM</div>
+                <div class="browse-model-desc">Google's efficient 2B model with strong instruction following.</div>
+              </div>
+            </div>
+            <div class="browse-model-row">
+              <div class="browse-model-check"></div>
+              <div class="browse-model-info">
+                <div class="browse-model-name">Phi-3 Mini 3.8B <span class="badge badge-rec">★ Rec</span><span class="badge badge-ram">Fits RAM</span><span class="badge badge-chat">Chat</span></div>
+                <div class="browse-model-size">2.3 GB · min 4 GB RAM</div>
+                <div class="browse-model-desc">Microsoft's compact model — punches well above its size.</div>
+              </div>
+            </div>
+            <div class="browse-model-row">
+              <div class="browse-model-check"></div>
+              <div class="browse-model-info">
+                <div class="browse-model-name">Mistral 7B <span class="badge badge-ram">Fits RAM</span><span class="badge badge-chat">Chat</span></div>
+                <div class="browse-model-size">4.1 GB · min 8 GB RAM</div>
+                <div class="browse-model-desc">Excellent instruction-following, very efficient for its size.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-inner">
+    <div class="hero-eyebrow reveal"><span class="status-dot"></span>Private Beta — Limited Access</div>
+    <h2 class="cta-h2 reveal reveal-delay-1">Your AI.<br />Your rules.</h2>
+    <p class="cta-desc reveal reveal-delay-2">Join the private beta and be first to run FlowOS on your Mac. Free during beta. No credit card. No cloud.</p>
+    <div class="cta-btns reveal reveal-delay-3">
+      <div class="download-wrap">
+        <button class="btn-primary" onclick="toggleDownload(event,'cta-dl')" style="border:none;cursor:pointer;font-family:inherit;">Download ↓</button>
+        <div class="download-dropdown" id="cta-dl">
+          <div class="dl-section-label">General</div>
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-0.1.0-universal.dmg" class="dl-option">
+            <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS-0.1.0-universal.dmg</div></div>
+          </a>
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-Setup-0.1.0.exe" class="dl-option">
+            <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS-Setup-0.1.0.exe</div></div>
+          </a>
+          <div class="dl-divider"></div>
+          <div class="dl-section-label">Business</div>
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-Business-0.1.0-universal.dmg" class="dl-option">
+            <span class="dl-icon">🍎</span><div><div class="dl-name">macOS</div><div class="dl-sub">FlowOS-Business-0.1.0-universal.dmg</div></div>
+          </a>
+          <a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-Business-Setup-0.1.0.exe" class="dl-option">
+            <span class="dl-icon">🪟</span><div><div class="dl-name">Windows</div><div class="dl-sub">FlowOS-Business-Setup-0.1.0.exe</div></div>
+          </a>
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="openWaitlist()" style="border:none;cursor:pointer;font-family:inherit;">Join waitlist ›</button>
+    </div>
+    <div class="cta-platform reveal">macOS 10.15 or later · Windows 8 or later · Free during beta</div>
+  </div>
+</section>
+
+<footer>
+  <div>Flow<strong>OS</strong> · v0.1.0</div>
+  <div>Built for privacy.</div>
+  <div>macOS 14+</div>
+</footer>
+
+<!-- ── Waitlist Modal ── -->
+<div class="waitlist-overlay" id="waitlist-overlay" onclick="handleOverlayClick(event)">
+  <div class="waitlist-modal">
+    <button class="wl-close" onclick="closeWaitlist()">✕</button>
+    <!-- Form state -->
+    <div id="wl-form-wrap">
+      <div class="wl-eyebrow"><span class="status-dot"></span>Private Beta</div>
+      <div class="wl-title">Join the Waitlist</div>
+      <p class="wl-desc">Be first to get access. Free during beta — no credit card, no cloud.</p>
+      <form id="wl-form" onsubmit="handleWaitlistSubmit(event)" novalidate>
+        <div class="wl-field">
+          <label class="wl-label" for="wl-name">Full Name</label>
+          <input class="wl-input" id="wl-name" type="text" placeholder="Your name" required autocomplete="name" />
+        </div>
+        <div class="wl-field">
+          <label class="wl-label" for="wl-email">Email Address</label>
+          <input class="wl-input" id="wl-email" type="email" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <span class="wl-plan-label-text">I'm signing up as</span>
+        <div class="wl-plan-row">
+          <label class="wl-plan-opt">
+            <input type="radio" name="wl-plan" value="general" checked />
+            <div class="wl-plan-card"><span class="plan-icon">👤</span>General<span class="plan-sub">Personal use</span></div>
+          </label>
+          <label class="wl-plan-opt">
+            <input type="radio" name="wl-plan" value="business" />
+            <div class="wl-plan-card"><span class="plan-icon">🏢</span>Business<span class="plan-sub">Team / org use</span></div>
+          </label>
+        </div>
+        <button type="submit" class="wl-submit" id="wl-submit-btn">Join Waitlist</button>
+        <div class="wl-error" id="wl-error">Something went wrong — please try again.</div>
+        <p class="wl-privacy">🔒 Encrypted &amp; stored privately. No spam, ever.</p>
+      </form>
+    </div>
+    <!-- Success state -->
+    <div class="wl-success" id="wl-success-wrap">
+      <div class="wl-success-icon">✓</div>
+      <div class="wl-success-title">You're on the list!</div>
+      <p class="wl-success-desc">We'll reach out when your spot opens up. Stay tuned.</p>
+      <button class="wl-success-close" onclick="closeWaitlist()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Scroll reveal ──────────────────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Typing animation for Ask section ──────────────────────────────────────
+const conversations = [
+  {
+    question: "Summarise the key decisions from my meeting notes and list action items.",
+    answer: `Based on your meeting notes, here are the key decisions:\n\n1. **Backend migration to FastAPI** — agreed for Q2 2026, owner: Sharan\n2. **UI redesign kickoff** — Alice to lead, deadline Q2\n3. **Sensor integration** — pending datasheet review by engineering\n\nAction items: Schedule follow-up by May 15. Review contract draft before sending.`
+  },
+  {
+    question: "What are the main specs of the sensor in the datasheet?",
+    answer: `From sensor_datasheet.pdf:\n\n• **Type:** Ultra-low power smart sensor (IMU)\n• **Features:** 3-axis accelerometer + gyroscope\n• **Interface:** I2C / SPI\n• **Power:** < 2 µA in low-power mode\n• **Package:** LGA-14\n\nRecommended for wearables and IoT edge devices.`
+  },
+  {
+    question: "Are there any red flags in the contract draft?",
+    answer: `Reviewing contract_draft_v3.pdf — 3 potential concerns:\n\n⚠ **Clause 4.2** — Liability cap is unusually low at £500\n⚠ **Clause 7** — IP ownership is ambiguous for derivative works\n✓ Payment terms (Net 30) look standard\n\nRecommend legal review before signing.`
+  }
+];
+
+let convIdx = 0;
+let animTimeout = null;
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function runConversation() {
+  const convo = document.getElementById('ask-convo');
+  const inputField = document.getElementById('ask-input-field');
+  const sendBtn = document.getElementById('ask-send-btn');
+  if (!convo || !inputField) return;
+
+  const { question, answer } = conversations[convIdx % conversations.length];
+  convIdx++;
+
+  // Clear previous
+  convo.innerHTML = '';
+
+  // Type the question
+  let typed = '';
+  inputField.value = '';
+  for (let i = 0; i < question.length; i++) {
+    typed += question[i];
+    inputField.value = typed;
+    await sleep(28 + Math.random() * 18);
+  }
+
+  await sleep(400);
+
+  // Animate send button click
+  sendBtn.style.transform = 'scale(0.92)';
+  sendBtn.style.opacity = '0.7';
+  await sleep(150);
+  sendBtn.style.transform = '';
+  sendBtn.style.opacity = '';
+
+  // Show user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg-user';
+  userMsg.textContent = question;
+  userMsg.style.opacity = '0';
+  userMsg.style.transform = 'translateY(8px)';
+  convo.appendChild(userMsg);
+  await sleep(30);
+  userMsg.style.transition = 'all 0.3s ease';
+  userMsg.style.opacity = '1';
+  userMsg.style.transform = 'none';
+
+  inputField.value = '';
+
+  await sleep(500);
+
+  // Show AI thinking
+  const thinkEl = document.createElement('div');
+  thinkEl.className = 'msg-ai';
+  thinkEl.innerHTML = `<div class="msg-ai-header"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent)"></span> FlowOS via Ollama</div><div class="msg-ai-body" style="color:var(--text-tertiary);font-style:italic;">Searching your documents<span class="typing-cursor"></span></div>`;
+  thinkEl.style.opacity = '0';
+  convo.appendChild(thinkEl);
+  await sleep(30);
+  thinkEl.style.transition = 'opacity 0.3s';
+  thinkEl.style.opacity = '1';
+
+  convo.scrollTop = convo.scrollHeight;
+
+  await sleep(1400);
+
+  // Stream the answer
+  const aiMsg = document.createElement('div');
+  aiMsg.className = 'msg-ai';
+  const aiBody = document.createElement('div');
+  aiBody.className = 'msg-ai-body';
+  aiMsg.innerHTML = `<div class="msg-ai-header"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent)"></span> FlowOS via Ollama</div>`;
+  aiMsg.appendChild(aiBody);
+  thinkEl.replaceWith(aiMsg);
+
+  // Render answer with basic markdown-ish styling
+  let rendered = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+
+  for (let i = 0; i < answer.length; i++) {
+    rendered += answer[i];
+    // Simple bold transform
+    const display = rendered
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    aiBody.innerHTML = display;
+    aiBody.appendChild(cursor);
+    convo.scrollTop = convo.scrollHeight;
+    await sleep(answer[i] === '\n' ? 80 : 12 + Math.random() * 10);
+  }
+
+  cursor.remove();
+
+  await sleep(3500);
+  runConversation();
+}
+
+// Start after a brief delay when visible
+const askSection = document.getElementById('ask');
+let animStarted = false;
+const askObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !animStarted) {
+      animStarted = true;
+      setTimeout(runConversation, 800);
+    }
+  });
+}, { threshold: 0.3 });
+if (askSection) askObserver.observe(askSection);
+
+// ── Download Dropdown ──────────────────────────────────────────────────────
+function toggleDownload(event, id) {
+  event.stopPropagation();
+  const target = document.getElementById(id);
+  const isOpen = target.classList.contains('open');
+  document.querySelectorAll('.download-dropdown').forEach(d => d.classList.remove('open'));
+  if (!isOpen) target.classList.add('open');
+}
+document.addEventListener('click', () => {
+  document.querySelectorAll('.download-dropdown').forEach(d => d.classList.remove('open'));
+});
+
+// ── Waitlist Modal ─────────────────────────────────────────────────────────
+function openWaitlist() {
+  document.getElementById('waitlist-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeWaitlist() {
+  document.getElementById('waitlist-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    document.getElementById('wl-form-wrap').style.display = '';
+    const s = document.getElementById('wl-success-wrap');
+    s.style.display = 'none';
+    document.getElementById('wl-form').reset();
+    const errEl = document.getElementById('wl-error');
+    if (errEl) errEl.style.display = 'none';
+    const btn = document.getElementById('wl-submit-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Join Waitlist'; }
+  }, 300);
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('waitlist-overlay')) closeWaitlist();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWaitlist(); });
+
+// ── Configuration ──────────────────────────────────────────────────────────
+// HOW TO SET UP:
+// 1. Generate an AES key:  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+//    Paste it as WL_ENC_KEY below. Keep a copy — you need it to decrypt your waitlist.
+// 2. Create a fine-grained GitHub PAT at https://github.com/settings/tokens
+//    Repository access: only 'flowos_web'  |  Permission: Contents → Read and Write
+//    Paste it as WL_GH_TOKEN below.
+const WL_ENC_KEY  = 'REPLACE_WITH_BASE64_AES256_KEY=';   // 32-byte base64
+const WL_GH_TOKEN = 'REPLACE_WITH_GITHUB_PAT';
+const WL_GH_OWNER = 'iyerSharan';
+const WL_GH_REPO  = 'flowos_web';
+const WL_GH_FILE  = 'waitlist.json';
+
+// ── AES-GCM Encryption ────────────────────────────────────────────────────
+async function encryptEntry(obj) {
+  const keyBytes = Uint8Array.from(atob(WL_ENC_KEY), c => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey('raw', keyBytes, 'AES-GCM', false, ['encrypt']);
+  const iv  = crypto.getRandomValues(new Uint8Array(12));
+  const ct  = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(obj))
+  );
+  return {
+    iv:         btoa(String.fromCharCode(...iv)),
+    ciphertext: btoa(String.fromCharCode(...new Uint8Array(ct))),
+    ts:         new Date().toISOString()
+  };
+}
+
+// ── GitHub Contents API ────────────────────────────────────────────────────
+async function appendToWaitlist(entry) {
+  const url = `https://api.github.com/repos/${WL_GH_OWNER}/${WL_GH_REPO}/contents/${WL_GH_FILE}`;
+  const hdrs = {
+    Authorization: `token ${WL_GH_TOKEN}`,
+    Accept: 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  };
+  let entries = [], sha = null;
+  const get = await fetch(url, { headers: hdrs });
+  if (get.ok) {
+    const f = await get.json();
+    sha = f.sha;
+    entries = JSON.parse(atob(f.content.replace(/\s/g, '')));
+  } else if (get.status !== 404) throw new Error(`Read error ${get.status}`);
+
+  entries.push(entry);
+  const body = {
+    message: `waitlist: entry ${entry.ts}`,
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(entries, null, 2))))
+  };
+  if (sha) body.sha = sha;
+  const put = await fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+  if (!put.ok) throw new Error(`Write error ${put.status}`);
+}
+
+// ── Form Submit ────────────────────────────────────────────────────────────
+async function handleWaitlistSubmit(event) {
+  event.preventDefault();
+  const name  = document.getElementById('wl-name').value.trim();
+  const email = document.getElementById('wl-email').value.trim();
+  const plan  = document.querySelector('input[name="wl-plan"]:checked')?.value || 'general';
+  const btn   = document.getElementById('wl-submit-btn');
+  const errEl = document.getElementById('wl-error');
+  if (!name || !email) return;
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    await appendToWaitlist(await encryptEntry({ name, email, plan }));
+    document.getElementById('wl-form-wrap').style.display = 'none';
+    const s = document.getElementById('wl-success-wrap');
+    s.style.display = 'flex'; s.style.flexDirection = 'column';
+  } catch (err) {
+    console.error('Waitlist error:', err);
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Join Waitlist';
+  }
+}
+</script>
+</body>
+</html>

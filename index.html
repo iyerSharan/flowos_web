@@ -1279,6 +1279,8 @@ footer {
 .wl-success-desc{font-size:14px;color:var(--text-secondary);font-weight:300;line-height:1.55;max-width:280px}
 .wl-success-close{margin-top:28px;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.12);color:var(--text-secondary);padding:10px 24px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
 .wl-success-close:hover{background:rgba(255,255,255,.12);color:var(--text)}
+.wl-mac-note{margin-top:14px;padding:10px 13px;background:rgba(255,193,7,.06);border:.5px solid rgba(255,193,7,.18);border-radius:10px;font-size:11.5px;color:var(--text-secondary);line-height:1.6}
+.wl-mac-note strong{color:var(--text);font-weight:600}
 </style>
 </head>
 <body>
@@ -2015,6 +2017,7 @@ if (askSection) askObserver.observe(askSection);
       <div class="wl-title" style="margin-bottom:6px">Downloads ready.</div>
       <p class="wl-desc" style="margin-bottom:20px">Choose your edition and platform.</p>
       <div class="wl-beta-section"><div class="wl-beta-section-label">General</div><div class="wl-dl-grid"><a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS-0.1.0-universal.dmg" class="wl-dl-btn"><span class="wl-dl-platform">macOS</span><span class="wl-dl-filename">FlowOS-0.1.0-universal.dmg</span></a><a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Setup.0.1.0.exe" class="wl-dl-btn"><span class="wl-dl-platform">Windows</span><span class="wl-dl-filename">FlowOS.Setup.0.1.0.exe</span></a></div></div><div class="wl-beta-section"><div class="wl-beta-section-label">Business</div><div class="wl-dl-grid"><a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business-0.1.0-universal.dmg" class="wl-dl-btn"><span class="wl-dl-platform">macOS</span><span class="wl-dl-filename">FlowOS.Business-0.1.0-universal.dmg</span></a><a href="https://github.com/iyerSharan/flowos_web/releases/download/v0.1.0/FlowOS.Business.Setup.0.1.0.exe" class="wl-dl-btn"><span class="wl-dl-platform">Windows</span><span class="wl-dl-filename">FlowOS.Business.Setup.0.1.0.exe</span></a></div></div>
+      <div class="wl-mac-note">🍎 <strong>macOS note:</strong> If you see "Apple could not verify…", open <strong>System Settings → Privacy &amp; Security</strong> and click <strong>Open Anyway</strong>. Or right-click the app in Finder → <strong>Open</strong> → <strong>Open</strong> in the dialog.</div>
       <button class="wl-success-close" onclick="closeWaitlist()" style="width:100%;margin-top:8px">Done</button>
     </div>
     <div id="wl-success-wrap" style="display:none;flex-direction:column;align-items:center;text-align:center;padding:12px 0 8px">

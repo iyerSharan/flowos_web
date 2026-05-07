@@ -21,3 +21,12 @@ node_modules/
 
 # Waitlist data — stored privately in iyerSharan/flowos-waitlist
 waitlist.json
+
+# Local decryption tool — never commit (keep off GitHub)
+decrypt_waitlist.py
+
+# Source design files (bundler output — compiled into index.html / business.html)
+"FlowOS Marketing - Standalone-2.html"
+"FlowOS Business - Standalone.html"
+FlowOS Marketing - Standalone-2.html
+FlowOS Business - Standalone.html

@@ -896,6 +896,342 @@ footer .a { color: var(--amber); }
   <div>macOS &amp; Windows · Free during beta</div>
 </footer>
 
+
+
+
+<script>
+// SCROLL REVEAL
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function typeInto(el, text, speed = 18) {
+  el.value = '';
+  for (let i = 0; i < text.length; i++) {
+    el.value += text[i];
+    await sleep(speed + Math.random() * 14);
+  }
+}
+async function streamHTML(el, html, speed = 8) {
+  el.innerHTML = '';
+  for (let i = 0; i < html.length; i++) {
+    el.innerHTML = html.slice(0, i + 1);
+    await sleep(html[i] === '\n' || html[i] === '>' ? speed * 0.5 : speed + Math.random() * 6);
+  }
+}
+async function streamText(el, text, speed = 14, withCursor = true) {
+  el.innerHTML = '';
+  const cursor = withCursor ? '<span class="cursor"></span>' : '';
+  for (let i = 0; i < text.length; i++) {
+    const display = text.slice(0, i + 1).replace(/\n/g, '<br>').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    el.innerHTML = display + cursor;
+    await sleep(text[i] === '\n' ? 60 : speed + Math.random() * 8);
+  }
+  if (withCursor) el.innerHTML = el.innerHTML.replace(/<span class="cursor"><\/span>/, '');
+}
+
+// ================= 1. INVOICE PARSING =================
+let parsingDone = false;
+async function runInvoiceParsing() {
+  if (parsingDone) return; parsingDone = true;
+  const dz = document.getElementById('dropzone-parse');
+  const fly = document.getElementById('pdf-fly');
+  const table = document.getElementById('extract-table');
+  const exportBar = document.getElementById('extract-export');
+
+  await sleep(600);
+  fly.classList.add('fly');
+  dz.classList.add('active');
+  await sleep(700);
+  fly.style.opacity = '0';
+  dz.classList.remove('active');
+
+  await sleep(300);
+  table.classList.add('show');
+
+  // Stream values one by one
+  const values = [
+    ['ex-vendor', 'Bosch Sensortec GmbH'],
+    ['ex-num', 'INV-2026-0419'],
+    ['ex-date', 'Apr 28, 2026'],
+    ['ex-due', '<span class="empty">— not stated —</span>'],
+    ['ex-lines', '3 items · LGA-14 sensor × 100, calibration, shipping'],
+    ['ex-vat', '$214.00'],
+    ['ex-total', '<strong style="color:var(--amber);">$1,284.00</strong>'],
+  ];
+  for (const [id, val] of values) {
+    await sleep(250);
+    document.getElementById(id).innerHTML = val;
+  }
+  await sleep(300);
+  exportBar.style.display = 'flex';
+
+  // Loop the demo
+  await sleep(5000);
+  fly.style.transition = 'none';
+  fly.classList.remove('fly');
+  fly.style.opacity = '0';
+  table.classList.remove('show');
+  exportBar.style.display = 'none';
+  for (const [id] of values) document.getElementById(id).innerHTML = '';
+  await sleep(100);
+  fly.style.transition = '';
+  parsingDone = false;
+  runInvoiceParsing();
+}
+
+// ================= 2. EMAIL TRIAGE =================
+const emailClassifications = [
+  { cls: 'Action required', tagClass: 'tag-action' },
+  { cls: 'Billing', tagClass: 'tag-bill' },
+  { cls: 'Spam', tagClass: 'tag-spam' },
+  { cls: 'Action required', tagClass: 'tag-action' },
+  { cls: 'Info', tagClass: 'tag-info' },
+];
+const replyDraft = `Hi Anna,\n\nThanks for the quick reply! Happy to confirm:\n\n**Timeline:** First logo concepts on **May 14**, refined direction on **May 21**.\n**Deposit:** Yes — happy to drop it from 50% to **30%** to make this work for your cashflow.\n\nShall I send the revised SOW today?\n\nBest,\nYou`;
+
+let triageDone = false;
+async function runEmailTriage() {
+  if (triageDone) return; triageDone = true;
+  // Reset
+  for (let i = 0; i < 5; i++) {
+    const t = document.getElementById('tag-' + i);
+    t.className = 'email-tag tag-untriaged';
+    t.textContent = 'Untriaged';
+  }
+  document.getElementById('classify-tag').style.display = 'none';
+  document.getElementById('classify-via').textContent = '';
+  document.getElementById('reply-draft').innerHTML = '';
+
+  await sleep(800);
+  // Classify each one rapidly
+  for (let i = 0; i < 5; i++) {
+    await sleep(380);
+    const t = document.getElementById('tag-' + i);
+    const c = emailClassifications[i];
+    t.className = 'email-tag ' + c.tagClass;
+    t.textContent = c.cls;
+    t.style.animation = 'tagPop 0.4s ease-out';
+  }
+
+  await sleep(600);
+  // Show classification for selected
+  const ct = document.getElementById('classify-tag');
+  ct.style.display = 'inline-block';
+  document.getElementById('classify-via').textContent = 'via Llama 3.2 · 0.3s';
+
+  await sleep(500);
+  // Stream reply
+  const draft = document.getElementById('reply-draft');
+  await streamText(draft, replyDraft, 16);
+
+  await sleep(5000);
+  triageDone = false;
+  runEmailTriage();
+}
+
+// ================= 3. QUOTE → INVOICE =================
+let quoteDone = false;
+async function runQuotePipeline() {
+  if (quoteDone) return; quoteDone = true;
+
+  // Reset
+  document.getElementById('qf-biz').value = '';
+  document.getElementById('qf-client').value = '';
+  document.getElementById('qf-desc').value = '';
+  document.getElementById('quote-empty').style.display = 'block';
+  document.getElementById('quote-doc').classList.remove('show');
+  document.getElementById('quote-lines').innerHTML = '';
+  document.getElementById('quote-totals').style.display = 'none';
+  document.getElementById('quote-actions').style.display = 'none';
+
+  await sleep(700);
+  await typeInto(document.getElementById('qf-biz'), 'Your Studio Ltd', 22);
+  await typeInto(document.getElementById('qf-client'), 'Acme Inc.', 22);
+  await typeInto(document.getElementById('qf-desc'), 'Brand identity refresh: logo redesign, 3 colour-palette options, type system, 2 rounds of revisions. Materials: 200 printed brochures (A5).', 14);
+
+  await sleep(400);
+  const btn = document.getElementById('qf-gen');
+  btn.classList.add('pressed');
+  await sleep(150);
+  btn.classList.remove('pressed');
+
+  await sleep(500);
+  document.getElementById('quote-empty').style.display = 'none';
+  document.getElementById('quote-doc').classList.add('show');
+
+  // Stream lines
+  const lines = [
+    ['Logo redesign &amp; explorations', '1', '$1,400'],
+    ['Colour-palette options (×3)', '1', '$420'],
+    ['Type system &amp; brand guidelines', '1', '$680'],
+    ['200 × A5 brochures (print)', '1', '$700'],
+  ];
+  const linesEl = document.getElementById('quote-lines');
+  for (const [d, q, p] of lines) {
+    await sleep(280);
+    const div = document.createElement('div');
+    div.className = 'quote-line';
+    div.innerHTML = `<span class="desc">${d}</span><span class="qty">${q}</span><span class="price">${p}</span>`;
+    div.style.opacity = '0'; div.style.transform = 'translateY(4px)';
+    linesEl.appendChild(div);
+    requestAnimationFrame(() => {
+      div.style.transition = 'all 0.3s';
+      div.style.opacity = '1'; div.style.transform = 'none';
+    });
+  }
+  await sleep(400);
+  document.getElementById('quote-totals').style.display = 'block';
+  await sleep(400);
+  document.getElementById('quote-actions').style.display = 'flex';
+
+  await sleep(6000);
+  quoteDone = false;
+  runQuotePipeline();
+}
+
+// ================= 4. CONTRACT =================
+let contractDone = false;
+async function runContract() {
+  if (contractDone) return; contractDone = true;
+
+  const dz = document.getElementById('dropzone-contract');
+  const fly = document.getElementById('contract-fly');
+  const summary = document.getElementById('contract-summary');
+
+  // Reset
+  ['c-ob-1','c-ob-2','c-pay-1','c-flag-1','c-flag-2'].forEach(id => document.getElementById(id).innerHTML = '');
+  summary.classList.remove('show');
+  fly.style.transition = 'none';
+  fly.classList.remove('fly');
+  fly.style.opacity = '0';
+  await sleep(50);
+  fly.style.transition = '';
+
+  await sleep(700);
+  fly.classList.add('fly');
+  dz.classList.add('active');
+  await sleep(700);
+  fly.style.opacity = '0';
+  dz.classList.remove('active');
+
+  await sleep(300);
+  summary.classList.add('show');
+
+  const items = [
+    ['c-ob-1', '<span class="lab">Deliver</span>Logo concepts and brand book by <strong>May 28, 2026</strong>'],
+    ['c-ob-2', '<span class="lab">Provide</span>Up to <strong>2 rounds</strong> of revisions per deliverable'],
+    ['c-pay-1', '<span class="lab">Net 30</span><strong>50% deposit</strong> on signing · balance due 30 days after final delivery'],
+    ['c-flag-1', '<span class="lab">Clause 4.2</span>Liability cap is <strong>£500</strong> — unusually low for project value'],
+    ['c-flag-2', '<span class="lab">Clause 7</span>IP ownership is <strong>ambiguous</strong> for derivative works'],
+  ];
+  for (const [id, html] of items) {
+    await sleep(450);
+    await streamHTML(document.getElementById(id), html, 6);
+  }
+
+  await sleep(6000);
+  contractDone = false;
+  runContract();
+}
+
+// ================= 5. ONBOARDING =================
+const obProjectDesc = '6-week brand-refresh project, 4 deliverables, weekly check-ins, kick-off May 12.';
+const obContent = {
+  email: `<h4>Welcome to Your Studio, Acme Inc.! 🎉</h4>
+    <p>Hi Jane,</p>
+    <p>Thrilled to kick off the 6-week brand refresh together. Here's what to expect from week one:</p>
+    <ul>
+      <li><strong>Mon May 12</strong> — Kick-off call (60 min)</li>
+      <li><strong>Wed May 14</strong> — First brand audit shared</li>
+      <li><strong>Fri May 16</strong> — Discovery questionnaire due back</li>
+    </ul>
+    <p>Looking forward to it. Reply with any questions before Monday.</p>
+    <p style="margin-top:8px;">Best,<br />Your Studio Ltd</p>`,
+  checklist: `<h4>Onboarding checklist for Acme Inc.</h4>
+    <ul>
+      <li>Sign &amp; return statement of work</li>
+      <li>Pay deposit invoice (Net 7)</li>
+      <li>Complete brand discovery questionnaire</li>
+      <li>Share existing brand assets (logos, fonts, photos)</li>
+      <li>Provide list of 3 brand inspirations</li>
+      <li>Confirm kick-off attendees</li>
+    </ul>`,
+  agenda: `<h4>Kick-off agenda — Mon May 12, 11:00 AM</h4>
+    <ul>
+      <li><strong>0:00</strong> Introductions &amp; project goals</li>
+      <li><strong>0:10</strong> Walkthrough of brand audit findings</li>
+      <li><strong>0:25</strong> Discuss Acme's audience &amp; positioning</li>
+      <li><strong>0:40</strong> Review timeline, deliverables &amp; revision process</li>
+      <li><strong>0:50</strong> Open questions &amp; immediate next steps</li>
+      <li><strong>1:00</strong> Wrap</li>
+    </ul>`
+};
+
+let onboardDone = false;
+async function runOnboard() {
+  if (onboardDone) return; onboardDone = true;
+
+  const desc = document.getElementById('ob-desc');
+  const pane = document.getElementById('ob-pane');
+  const tabs = document.querySelectorAll('.onboard-tab');
+
+  desc.value = '';
+  pane.innerHTML = '<div style="color:var(--text-tertiary); font-size:11px; text-align:center; padding: 60px 12px; line-height:1.6;">Drafted materials will appear here.</div>';
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === 'email'));
+
+  await sleep(700);
+  await typeInto(desc, obProjectDesc, 16);
+
+  await sleep(400);
+  const btn = document.getElementById('ob-gen');
+  btn.classList.add('pressed');
+  await sleep(150);
+  btn.classList.remove('pressed');
+
+  await sleep(400);
+  // Stream email tab
+  await streamHTML(pane, obContent.email, 5);
+
+  // Cycle through tabs
+  for (const tab of ['checklist', 'agenda', 'email']) {
+    await sleep(2200);
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    await streamHTML(pane, obContent[tab], 4);
+  }
+
+  await sleep(2500);
+  onboardDone = false;
+  runOnboard();
+}
+
+// ================= TRIGGER ON VIEW =================
+function setupTrigger(sectionId, runner) {
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+  let started = false;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        setTimeout(runner, 500);
+      }
+    });
+  }, { threshold: 0.25 });
+  obs.observe(el);
+}
+
+setupTrigger('parsing-demo', runInvoiceParsing);
+setupTrigger('triage-demo', runEmailTriage);
+setupTrigger('quote-demo', runQuotePipeline);
+setupTrigger('contract-demo', runContract);
+setupTrigger('onboard-demo', runOnboard);
+</script>
+
+
+
 <!-- FlowOS Waitlist/Beta Modal -->
 <div class="waitlist-overlay" id="waitlist-overlay" onclick="if(event.target===this)closeWaitlist()">
   <div class="waitlist-modal">
